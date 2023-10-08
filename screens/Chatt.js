@@ -18,9 +18,11 @@ import { auth, database } from "../config/firebase";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import colors from "../colors";
-
 import { Chat, MessageType } from "@flyerhq/react-native-chat-ui";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+
 
 export default function Chatt() {
   const [messages, setMessages] = useState([]);
@@ -66,5 +68,42 @@ const unsubscribe = onSnapshot(q, querySnapshot => {
 return unsubscribe;
   }, [])
 
-  return <GiftedChat></GiftedChat>;
+  const onSend = useCallback((messages = []) => {
+    setMessages(previousMessages =>
+      GiftedChat.append(previousMessages, messages)
+    );
+    // setMessages([...messages, ...messages]);
+    const { _id, createdAt, text, user } = messages[0];    
+    addDoc(collection(database, 'chats'), {
+      _id,
+      createdAt,
+      text,
+      user
+    });
+  }, []);
+
+  return (
+  
+      <GiftedChat
+            messages={messages}
+            showAvatarForEveryMessage={false}
+            showUserAvatar={false}
+            onSend={messages => onSend(messages)}
+            messagesContainerStyle={{
+              backgroundColor: '#fff'
+            }}
+            textInputStyle={{
+              backgroundColor: '#fff',
+              borderRadius: 20,
+              margin: 20,
+            }}
+            user={{
+              _id: auth?.currentUser?.email,
+              avatar: 'https://i.pravatar.cc/300'
+            }}
+      />
+    
+    
+    
+      )
 }
