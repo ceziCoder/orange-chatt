@@ -14,7 +14,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { signOut } from "firebase/auth";
-import { auth, database } from "../config/firebase";
+import { auth, database, storage  } from "../config/firebase";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import colors from "../colors";
@@ -22,88 +22,87 @@ import { Chat, MessageType } from "@flyerhq/react-native-chat-ui";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-
-
 export default function Chatt() {
   const [messages, setMessages] = useState([]);
   const navigation = useNavigation();
+  const user = auth.currentUser;
+
+  const avatarUrl = user ? user.photoURL : null;
 
   const onSignOut = () => {
-    signOut(auth)
-      .catch((error) => alert(error.message));
-  }
-
+    signOut(auth).catch((error) => alert(error.message));
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity
           style={{
-            marginRight: 10
+            marginRight: 10,
           }}
           onPress={onSignOut}
         >
-          <AntDesign name="logout" size={24} color={colors.gray} style={{marginRight: 10}}/>
+          <AntDesign
+            name="logout"
+            size={24}
+            color={colors.gray}
+            style={{ marginRight: 10 }}
+          />
         </TouchableOpacity>
-      )
+      ),
     });
   }, [navigation]);
 
   useLayoutEffect(() => {
+    const collectionRef = collection(database, "chats");
+    const q = query(collectionRef, orderBy("createdAt", "desc"));
 
-    const collectionRef = collection(database, 'chats');
-    const q = query(collectionRef, orderBy('createdAt', 'desc'));
-
-const unsubscribe = onSnapshot(q, querySnapshot => {
-    console.log('querySnapshot unsusbscribe');
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      console.log("querySnapshot unsusbscribe");
       setMessages(
-        querySnapshot.docs.map(doc => ({
+        querySnapshot.docs.map((doc) => ({
           _id: doc.data()._id,
           createdAt: doc.data().createdAt.toDate(),
           text: doc.data().text,
-          user: doc.data().user
+          user: doc.data().user,
         }))
       );
     });
-return unsubscribe;
-  }, [])
+    return unsubscribe;
+  }, []);
 
   const onSend = useCallback((messages = []) => {
-    setMessages(previousMessages =>
+    setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, messages)
     );
     // setMessages([...messages, ...messages]);
-    const { _id, createdAt, text, user } = messages[0];    
-    addDoc(collection(database, 'chats'), {
+    const { _id, createdAt, text, user } = messages[0];
+    addDoc(collection(database, "chats"), {
       _id,
       createdAt,
       text,
-      user
+      user,
     });
   }, []);
 
   return (
-  
-      <GiftedChat
-            messages={messages}
-            showAvatarForEveryMessage={false}
-            showUserAvatar={false}
-            onSend={messages => onSend(messages)}
-            messagesContainerStyle={{
-              backgroundColor: '#fff'
-            }}
-            textInputStyle={{
-              backgroundColor: '#fff',
-              borderRadius: 20,
-              margin: 20,
-            }}
-            user={{
-              _id: auth?.currentUser?.email,
-              avatar: 'https://i.pravatar.cc/300'
-            }}
-      />
-    
-    
-    
-      )
+    <GiftedChat
+      messages={messages}
+      showAvatarForEveryMessage={true}
+      showUserAvatar={true}
+      onSend={(messages) => onSend(messages)}
+      messagesContainerStyle={{
+        backgroundColor: "#fff",
+      }}
+      textInputStyle={{
+        backgroundColor: "#fff",
+        borderRadius: 20,
+        margin: 20,
+      }}
+      user={{
+        _id: auth?.currentUser?.email,
+        avatar: avatarUrl || 'https://i.pravatar.cc/300',
+      }}
+    />
+  );
 }

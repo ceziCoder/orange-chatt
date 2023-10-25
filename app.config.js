@@ -14,6 +14,18 @@ export default {
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "permissions": {
+      "camera": {
+        "status": "allow",
+        "ios": "photo",
+        "android": "camera",
+        "android": "photos"
+      },
+      "mediaLibrary": {
+        "read": true,
+        "write": true
+      }
+    },
     "assetBundlePatterns": [
       "**/*"
     ],
