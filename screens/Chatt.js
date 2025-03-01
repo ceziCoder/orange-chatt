@@ -14,13 +14,14 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { signOut } from "firebase/auth";
-import { auth, database, storage  } from "../config/firebase";
+import { auth, database, storage } from "../config/firebase";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import colors from "../colors";
 import { Chat, MessageType } from "@flyerhq/react-native-chat-ui";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SafeAreaView } from "react-native-safe-area-context";
+import moment from "moment";
 
 export default function Chatt() {
   const [messages, setMessages] = useState([]);
@@ -85,24 +86,42 @@ export default function Chatt() {
     });
   }, []);
 
+  // Funkcja do renderowania czasu wiadomości
+  const renderTime = (props) => {
+    return (
+      <Text style={{ fontSize: 10, color: "#999", marginHorizontal: 10 }}>
+        {moment(props.currentMessage.createdAt).format("HH:mm")} {/* Formatowanie czasu */}
+      </Text>
+    );
+  };
+
   return (
-    <GiftedChat
-      messages={messages}
-      showAvatarForEveryMessage={true}
-      showUserAvatar={true}
-      onSend={(messages) => onSend(messages)}
-      messagesContainerStyle={{
-        backgroundColor: "#fff",
-      }}
-      textInputStyle={{
-        backgroundColor: "#fff",
-        borderRadius: 20,
-        margin: 20,
-      }}
-      user={{
-        _id: auth?.currentUser?.email,
-        avatar: avatarUrl || 'https://i.pravatar.cc/300',
-      }}
-    />
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }}>
+        <GiftedChat
+          messages={messages}
+          showAvatarForEveryMessage={true}
+          showUserAvatar={true}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          onSend={(messages) => onSend(messages)}
+          messagesContainerStyle={{
+            backgroundColor: "#fff",
+          }}
+          textInputStyle={{
+            backgroundColor: "#fff",
+            borderRadius: 20,
+            margin: 10,
+          }}
+          user={{
+            _id: auth?.currentUser?.email,
+            avatar: avatarUrl || 'https://i.pravatar.cc/300',
+          }}
+          renderTime={renderTime}
+        />
+
+      </SafeAreaView>
+    </SafeAreaProvider>
+
   );
 }

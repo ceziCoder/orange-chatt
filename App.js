@@ -10,8 +10,13 @@ import Signup from "./screens/Signup";
 import { onAuthStateChanged } from "firebase/auth";
 import Home from "./screens/Home";
 import { auth } from "./config/firebase";
+import { Buffer } from "buffer";
 
+global.Buffer = global.Buffer || Buffer;
 
+if (typeof global === "undefined") {
+  global = globalThis;
+}
 
 const Stack = createStackNavigator();
 
@@ -78,7 +83,7 @@ export function RootNavigator() {
 
 export default function App() {
   return (
-    
+
     <AuthenticatedUserProvider>
     <RootNavigator />
   </AuthenticatedUserProvider>
