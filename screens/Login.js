@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Button, TextInput, Image, SafeAreaView, TouchableOpacity, StatusBar, Alert } from "react-native";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../config/firebase";
+import { auth, database } from "../config/firebase";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 const backImage = require("../assets/or.jpg");
 
 
@@ -11,14 +12,50 @@ export default function Login({ navigation }) {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-  
+
     const onHandleLogin = () => {
         if (email !== "" && password !== "") {
-            signInWithEmailAndPassword(auth, email, password)
-                .then(() => Alert.alert("Login success"))
+          signInWithEmailAndPassword(auth, email, password)
+
+            .then(() => {
+              Alert.alert("Login success")
+
+              // After successful login, update the user status
+              updateUserStatus();
+
+
+            })
+
                 .catch((err) => Alert.alert("Login error", err.message));
         }
     }
+
+
+
+
+const updateUserStatus = async () => {
+  if (auth.currentUser) {
+    const userRef = doc(database, "users", auth.currentUser.uid);
+
+    // Zaloguj dane, które chcesz zapisać
+    console.log("Updating user status:", {
+      name: auth.currentUser.displayName || "Anonim",
+      avatar: auth.currentUser.photoURL || "https://i.pravatar.cc/300",
+      isActive: true
+    });
+
+    // Zaktualizuj użytkownika z domyślnymi wartościami
+    await setDoc(userRef, {
+      name: auth.currentUser.displayName || "Anonim",
+      avatar: auth.currentUser.photoURL || "https://i.pravatar.cc/300",
+      isActive: true
+    }, { merge: true }); // Merge zapewnia, że inne dane nie zostaną nadpisane
+  }
+};
+  // Wywołaj funkcję po zalogowaniu
+ useEffect(() => {
+    updateUserStatus();
+  }, []);
 
 
     return (
@@ -66,7 +103,7 @@ export default function Login({ navigation }) {
 
     )
 
-}
+  }
 
 const styles = StyleSheet.create({
     container: {

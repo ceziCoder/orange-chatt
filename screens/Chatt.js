@@ -12,6 +12,10 @@ import {
   orderBy,
   query,
   onSnapshot,
+  where,
+  doc,
+  updateDoc,
+  getDoc,
 } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 import { auth, database, storage } from "../config/firebase";
@@ -22,15 +26,32 @@ import { Chat, MessageType } from "@flyerhq/react-native-chat-ui";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SafeAreaView } from "react-native-safe-area-context";
 import moment from "moment";
+import {ChatHeader} from "../components/chatheader";
 
 export default function Chatt() {
   const [messages, setMessages] = useState([]);
   const navigation = useNavigation();
   const user = auth.currentUser;
+  const [users, setUsers] = useState([]);
 
   const avatarUrl = user ? user.photoURL : null;
 
-  const onSignOut = () => {
+
+
+  const onSignOut = async () => {
+    if (auth.currentUser) {
+      const userRef = doc(database, "users", auth.currentUser.uid);
+
+      // Sprawdź, czy dokument istnieje
+      const docSnap = await getDoc(userRef);
+      if (docSnap.exists()) {
+        // Dokument istnieje, zaktualizuj go
+        await updateDoc(userRef, { isActive: false });
+      } else {
+        console.log("Dokument użytkownika nie istnieje. Sprawdź, czy użytkownik został poprawnie zapisany.");
+      }
+    }
+
     signOut(auth).catch((error) => alert(error.message));
   };
 
@@ -72,6 +93,23 @@ export default function Chatt() {
     return unsubscribe;
   }, []);
 
+  useEffect(() => {
+    const usersRef = collection(database, "users");
+    const q = query(usersRef, where("isActive", "==", true));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      console.log("Snapshot:", snapshot.docs);
+      const usersList = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      console.log("Aktywni użytkownicy:", usersList);
+      setUsers(usersList);
+    });
+
+    return unsubscribe;
+  }, []);
+
   const onSend = useCallback((messages = []) => {
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, messages)
@@ -83,6 +121,8 @@ export default function Chatt() {
       createdAt,
       text,
       user,
+
+
     });
   }, []);
 
@@ -95,10 +135,19 @@ export default function Chatt() {
     );
   };
 
+  useEffect(() => {
+    console.log("Active users:", users);
+  }, [users]);
+
+
+
   return (
     <SafeAreaProvider>
+      <ChatHeader users={users} />
       <SafeAreaView style={{ flex: 1 }}>
+
         <GiftedChat
+          // Dodaj nagłówek
           messages={messages}
           showAvatarForEveryMessage={true}
           showUserAvatar={true}
