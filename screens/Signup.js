@@ -10,7 +10,7 @@ import {
   TextInput,
   Image,
 } from "react-native";
-import { createUserWithEmailAndPassword, updateProfile, getAuth } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile, getAuth, browserSessionPersistence } from "firebase/auth";
 import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
 import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, database } from "../config/firebase";
@@ -27,6 +27,8 @@ export default function Signup({ navigation }) {
 
   const auth = getAuth();
   const storage = getStorage();
+
+  setPersistence(auth, browserSessionPersistence);
 
   const onHandleSignup = async () => {
     if (email !== "" && password !== "") {
@@ -64,7 +66,7 @@ export default function Signup({ navigation }) {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 0.1,
+      quality: 1,
     });
 
     if (!result.canceled) {
