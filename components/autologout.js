@@ -4,7 +4,7 @@ import { auth, database } from "../config/firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import { AppState } from "react-native";
 
-const AUTO_LOGOUT_TIME = 1 * 60 * 1000; // 1 minuta w milisekundach
+const AUTO_LOGOUT_TIME = 15 * 60 * 1000; // 1 minuta w milisekundach
 
 export const useAutoLogout = () => {
   const lastActivityTime = useRef(Date.now()); // Czas ostatniej aktywności
