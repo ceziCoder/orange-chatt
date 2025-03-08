@@ -17,7 +17,7 @@ import {
   updateDoc,
   getDoc,
 } from "firebase/firestore";
-import { signOut } from "firebase/auth";
+import { signOut, browserSessionPersistence, setPersistence, getAuth } from "firebase/auth";
 import { auth, database, storage } from "../config/firebase";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
@@ -26,7 +26,7 @@ import { Chat, MessageType } from "@flyerhq/react-native-chat-ui";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SafeAreaView } from "react-native-safe-area-context";
 import moment from "moment";
-import {ChatHeader} from "../components/chatheader";
+import { ChatHeader } from "../components/chatheader";
 
 export default function Chatt() {
   const [messages, setMessages] = useState([]);
@@ -35,6 +35,7 @@ export default function Chatt() {
   const [users, setUsers] = useState([]);
 
   const avatarUrl = user ? user.photoURL : null;
+
 
 
 
@@ -56,24 +57,27 @@ export default function Chatt() {
   };
 
   useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity
-          style={{
-            marginRight: 10,
-          }}
-          onPress={onSignOut}
-        >
-          <AntDesign
-            name="logout"
-            size={24}
-            color={colors.gray}
-            style={{ marginRight: 10 }}
-          />
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation]);
+    if (auth.currentUser) {
+      navigation.setOptions({
+        headerRight: () => (
+          <TouchableOpacity
+            style={{
+              marginRight: 10,
+            }}
+            onPress={onSignOut}
+          >
+            <AntDesign
+              name="logout"
+              size={24}
+              color={colors.gray}
+              style={{ marginRight: 10 }}
+            />
+          </TouchableOpacity>
+        ),
+      });
+    }
+  }, [navigation, auth.currentUser]); // Dodaj auth.currentUser do zależności
+
 
   useLayoutEffect(() => {
     const collectionRef = collection(database, "chats");
@@ -138,6 +142,7 @@ export default function Chatt() {
   useEffect(() => {
     console.log("Active users:", users);
   }, [users]);
+
 
 
 

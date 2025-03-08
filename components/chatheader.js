@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   user: {
-    marginLeft: -30, // Negative margin to make the avatars overlap
+    marginLeft: -25, // Negative margin to make the avatars overlap
     alignItems: "center",
     padding: 1,
   },

@@ -11,6 +11,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import Home from "./screens/Home";
 import { auth } from "./config/firebase";
 import { Buffer } from "buffer";
+import { useAutoLogout } from "./components/autologout";
 
 global.Buffer = global.Buffer || Buffer;
 
@@ -24,6 +25,7 @@ const AuthenticatedUserContext = createContext();
 
 const AuthenticatedUserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  useAutoLogout();
   return (
     <AuthenticatedUserContext.Provider value={{ user, setUser }}>
       {children}

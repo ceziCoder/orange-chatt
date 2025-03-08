@@ -28,7 +28,7 @@ export default function Signup({ navigation }) {
   const auth = getAuth();
   const storage = getStorage();
 
-  setPersistence(auth, browserSessionPersistence);
+  
 
   const onHandleSignup = async () => {
     if (email !== "" && password !== "") {

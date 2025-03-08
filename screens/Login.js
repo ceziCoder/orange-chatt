@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Button, TextInput, Image, SafeAreaView, TouchableOpacity, StatusBar, Alert } from "react-native";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, setPersistence, browserSessionPersistence, getAuth } from "firebase/auth";
 import { auth, database } from "../config/firebase";
 import { doc, setDoc, updateDoc } from "firebase/firestore";
 const backImage = require("../assets/or.jpg");
@@ -12,6 +12,7 @@ export default function Login({ navigation }) {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
 
     const onHandleLogin = () => {
         if (email !== "" && password !== "") {
@@ -49,13 +50,15 @@ const updateUserStatus = async () => {
       name: auth.currentUser.displayName || "Anonim",
       avatar: auth.currentUser.photoURL || "https://i.pravatar.cc/300",
       isActive: true
-    }, { merge: true }); // Merge zapewnia, że inne dane nie zostaną nadpisane
+    }, { merge: true });// Merge zapewnia, że inne dane nie zostaną nadpisane
   }
 };
+
+  ///
   // Wywołaj funkcję po zalogowaniu
- useEffect(() => {
-    updateUserStatus();
-  }, []);
+// useEffect(() => {
+  //  updateUserStatus();
+ // }, []);
 
 
     return (
