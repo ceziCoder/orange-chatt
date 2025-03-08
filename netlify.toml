@@ -1,5 +1,5 @@
 [build]
-  base = "orange-chatt"
+  base = "orange-chatt/orange-chatt"
   publish = "web-build"
   command = "npx expo export:web"
 
