@@ -166,6 +166,8 @@ export default function Chatt() {
             backgroundColor: "#fff",
             borderRadius: 20,
             margin: 10,
+            marginTop: 5,
+            padding: 10,
           }}
           user={{
             _id: auth?.currentUser?.email,
