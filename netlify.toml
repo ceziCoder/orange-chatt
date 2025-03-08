@@ -1,8 +1,7 @@
 [build]
-  base = "react-native-orange-chatt-----inProgres"
-  command = "npm run build"
+  base = "orange-chatt"
   publish = "web-build"
-  environment = { NODE_VERSION = "18" }
+  command = "npx expo export:web"
 
 
 [[redirects]]
