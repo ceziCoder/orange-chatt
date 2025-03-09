@@ -1,0 +1,104 @@
+# Chatt - React Native Chat App
+
+## Overview
+Chatt is a real-time chat application built using React Native and Expo. It integrates Firebase for authentication and database management, enabling users to send and receive messages with real-time updates.
+
+## Features
+- Real-time messaging with Firebase Firestore
+- User authentication with Firebase Auth
+- Custom chat UI using `react-native-gifted-chat`
+- Image and file sharing support
+- Active user status tracking
+- Responsive design with React Native and Expo
+
+## Technologies Used
+- React Native
+- Expo
+- Firebase (Auth, Firestore, Storage)
+- `react-native-gifted-chat`
+- `react-navigation`
+- `moment` for timestamp formatting
+
+
+## Installation
+
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/ceziCoder/react-native-orange-chatt.git
+   cd react-native-orange-chatt
+   ```
+
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+
+3. Set up Firebase:
+   - Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
+   - Add a new web app and obtain the Firebase config
+   - Replace Firebase config values in `config/firebase.js`
+
+4. Start the application:
+   ```sh
+   npm start
+   ```
+   Or run on a specific platform:
+   ```sh
+   npm run android  # For Android
+   npm run ios      # For iOS
+   npm run web      # For Web
+   ```
+
+## Configuration
+
+
+REACT_APP_FIREBASE_API_KEY=your_api_key
+REACT_APP_FIREBASE_AUTH_DOMAIN=your_auth_domain
+REACT_APP_FIREBASE_PROJECT_ID=your_project_id
+REACT_APP_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+REACT_APP_FIREBASE_APP_ID=your_app_id
+```
+
+## Deployment
+### Hosting on Netlify
+1. Export the web version:
+   ```sh
+   npx expo export:web
+   ```
+2. Ensure `netlify.toml` is correctly configured:
+   ```toml
+   [build]
+  publish = "web-build"
+  command = "npx expo export:web"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+on netlify
+
+Runtime
+    Not set
+Base directory
+    /
+Package directory
+    Not set
+Build command
+    npx expo export:web
+Publish directory
+    web-build
+Functions directory
+    netlify/functions
+Deploy log visibility
+    Logs are public
+Build status
+    Active
+
+   ```
+3. Deploy to Netlify:
+   - Link your GitHub repository to Netlify
+   - Push your changes and deploy
+
+## License
