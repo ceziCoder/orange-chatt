@@ -5,7 +5,7 @@ import React, {
   useCallback,
 } from "react";
 import { TouchableOpacity, Text } from "react-native";
-import { GiftedChat } from "react-native-gifted-chat";
+import { GiftedChat, Bubble } from "react-native-gifted-chat";
 import {
   collection,
   addDoc,
@@ -62,7 +62,7 @@ export default function Chatt() {
         headerRight: () => (
           <TouchableOpacity
             style={{
-              marginRight: 10,
+              marginRight: 10
             }}
             onPress={onSignOut}
           >
@@ -174,6 +174,47 @@ export default function Chatt() {
             avatar: avatarUrl || 'https://i.pravatar.cc/300',
           }}
           renderTime={renderTime}
+          renderBubble={(props) => {
+            return (
+              <Bubble
+                {...props}
+                wrapperStyle={{
+                  right: {
+                    backgroundColor: "#d16d0a", // Kolor Twoich wiadomości
+                    padding: 8,
+                    borderRadius: 10,
+                      shadowColor: colors.primary,
+                            shadowOffset: {
+                                width: 0,
+                                height: 2,
+                            },
+                            shadowOpacity: .9,
+                            shadowRadius: 8,
+                  },
+                  left: {
+                    backgroundColor: "#E5E5EA", // Kolor wiadomości innych użytkowników
+                    padding: 8,
+                    borderRadius: 10,
+                      shadowColor: colors.primary,
+                            shadowOffset: {
+                                width: 0,
+                                height: 2,
+                            },
+                            shadowOpacity: .9,
+                            shadowRadius: 8,
+                  },
+                }}
+                textStyle={{
+                  right: {
+                    color: "#fff", // Kolor tekstu Twoich wiadomości
+                  },
+                  left: {
+                    color: "#000", // Kolor tekstu innych użytkowników
+                  },
+                }}
+              />
+            );
+          }}
         />
 
       </SafeAreaView>
