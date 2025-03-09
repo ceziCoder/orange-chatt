@@ -61,6 +61,8 @@ REACT_APP_FIREBASE_APP_ID=your_app_id
 ```
 
 ## Deployment
+orangechatt.netlify.app
+
 ### Hosting on Netlify
 1. Export the web version:
    ```sh
